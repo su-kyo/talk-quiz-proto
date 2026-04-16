@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>아콘과 대화하기</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;800;900&family=Noto+Serif+KR:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preload" as="image" href="./bg_intro.png" />
+    <link rel="stylesheet" href="./style.css" />
+    <script>
+      sessionStorage.removeItem("quizEntry");
+      sessionStorage.removeItem("quizFinished");
+      sessionStorage.removeItem("talkQuizSummary");
+      sessionStorage.removeItem("talkQuizSelectedSnack");
+      sessionStorage.removeItem("talkQuizSkipToLast");
+    </script>
+  </head>
+  <body>
+    <main class="screen-intro" aria-label="아콘과 대화하기 소개">
+      <div class="intro-title-set">
+        <p class="intro-kicker">아콘과 대화하기</p>
+        <div class="intro-ribbon" aria-label="지구를 지키는 식탁 약속">
+          <span class="intro-ribbon-wing intro-ribbon-wing-left" aria-hidden="true"></span>
+          <div class="intro-ribbon-body">
+            <span class="intro-ribbon-star" aria-hidden="true">✦</span>
+            <h1>지구를 지키는 식탁 약속</h1>
+            <span class="intro-ribbon-star" aria-hidden="true">✦</span>
+          </div>
+          <span class="intro-ribbon-wing intro-ribbon-wing-right" aria-hidden="true"></span>
+        </div>
+        <div class="intro-description">
+          <p>지문을 읽고 질문에 답하는 활동이에요.</p>
+          <p>알맞은 답을 고르며 내용을 살펴보세요.</p>
+        </div>
+        <a class="intro-start-button" id="introStartButton" href="./quiz.html">시작하기</a>
+      </div>
+    </main>
+    <script>
+      let isStartingQuiz = false;
+
+      function startQuizFromIntro(skipToLast = false) {
+        if (isStartingQuiz) return;
+        isStartingQuiz = true;
+        sessionStorage.setItem("quizEntry", "true");
+        if (skipToLast) {
+          sessionStorage.setItem("talkQuizSkipToLast", "true");
+        }
+        location.href = "./quiz.html";
+      }
+
+      document.querySelector("#introStartButton").addEventListener("click", (event) => {
+        event.preventDefault();
+        startQuizFromIntro();
+      });
+
+      function handleIntroEscape(event) {
+        if (event.key !== "Escape" && event.key !== "Esc") return;
+        event.preventDefault();
+        startQuizFromIntro(true);
+      }
+
+      window.addEventListener("keydown", handleIntroEscape, true);
+      window.addEventListener("keyup", handleIntroEscape, true);
+    </script>
+  </body>
+</html>

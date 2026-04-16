@@ -1,0 +1,15 @@
+.DS_Store
+*/.DS_Store
+
+.git/
+.gitignore
+.vercel/
+node_modules/
+tests/
+*.test.mjs
+
+.env
+.env.*
+
+# Keep the active Rive asset, but never upload the old duplicate.
+foodtruck.riv

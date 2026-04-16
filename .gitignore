@@ -1,0 +1,15 @@
+.DS_Store
+*/.DS_Store
+
+node_modules/
+.vercel/
+dist/
+coverage/
+.cache/
+
+.env
+.env.*
+!.env.example
+
+# The quiz now uses foodtruck-edit.riv.
+foodtruck.riv

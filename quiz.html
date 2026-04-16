@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>아콘과 대화하기</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;800;900&family=Noto+Serif+KR:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css" />
+    <script>
+      if (sessionStorage.getItem("quizEntry") !== "true") {
+        location.replace("./intro.html");
+      } else {
+        sessionStorage.removeItem("quizEntry");
+      }
+    </script>
+  </head>
+  <body>
+    <main class="student-screen" data-article-open="true">
+      <section class="section-article" aria-label="국어 지문">
+        <div class="fontsize-control" aria-label="지문 글자 크기">
+          <button type="button" class="fontsize-button" data-font-size="large" aria-label="지문 크게">
+            <span class="font-icon font-icon-plus" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="fontsize-button is-active" data-font-size="normal" aria-label="지문 보통">
+            <span class="font-icon font-icon-normal" aria-hidden="true">ㅎ</span>
+          </button>
+          <button type="button" class="fontsize-button" data-font-size="small" aria-label="지문 작게">
+            <span class="font-icon font-icon-minus" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <article class="article-scroll article-size-normal" id="articleText"></article>
+      </section>
+
+      <section class="section-quiz" aria-label="아콘과 대화하기 활동">
+        <div class="rive-layer" id="riveStage" data-rive-state="booting">
+          <div class="rive-viewport" id="riveViewport">
+            <canvas id="riveCanvas" aria-label="NPC 고양이 아콘 애니메이션"></canvas>
+            <canvas class="rive-snapshot" id="riveSnapshotCanvas" aria-hidden="true" hidden></canvas>
+          </div>
+          <div class="rive-debug-message" id="riveDebugMessage" hidden>
+            Rive 로딩 상태를 확인해 주세요.
+          </div>
+        </div>
+
+        <div class="quiz-layer" data-node-name="quiz layer">
+          <div class="npc-area" data-node-name="npc area">
+            <div class="dialogue-npc" data-node-name="dialogue npc">
+              <div class="npc-textbox" data-node-name="textbox" aria-live="polite">
+                <div class="snack-timer" id="snackTimer" aria-label="간식 선택 남은 시간" hidden>
+                  <svg class="snack-timer-ring" viewBox="0 0 48 48" aria-hidden="true">
+                    <circle class="snack-timer-track" cx="24" cy="24" r="20"></circle>
+                    <circle class="snack-timer-progress" id="snackTimerProgress" cx="24" cy="24" r="20"></circle>
+                  </svg>
+                  <span class="snack-timer-value" id="snackTimerValue">5</span>
+                </div>
+                <p id="npcText"></p>
+              </div>
+              <div class="npc-tail" aria-hidden="true"></div>
+            </div>
+          </div>
+
+          <div class="user-area" data-node-name="user area">
+            <div class="dialogue-user" data-node-name="dialogue user">
+              <div class="choice-list" id="choiceList" aria-label="선택지"></div>
+              <div class="snack-choice-list" id="snackChoiceList" aria-label="간식 선택" hidden></div>
+
+              <div class="student-response" id="studentResponse" data-node-name="comment" hidden>
+                <p id="studentText"></p>
+                <div class="student-button-row">
+                  <button type="button" class="next-button" id="nextButton">다음 <span aria-hidden="true">›</span></button>
+                </div>
+              </div>
+
+              <div class="finish-card" id="finishCard" hidden>
+                <p>모든 이야기를 마쳤어요. 식탁에서 지구를 지키는 약속을 실천해 봐요!</p>
+                <div class="student-button-row">
+                  <button type="button" class="next-button" id="endButton">끝내기</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="button-article"
+          id="buttonArticle"
+          aria-controls="articleText"
+          aria-expanded="true"
+          aria-label="지문 열기 닫기"
+        >
+          <img src="./article.svg" alt="" aria-hidden="true" />
+        </button>
+      </section>
+    </main>
+
+    <div class="loading-overlay" id="loadingOverlay" aria-live="polite" aria-label="다음 화면으로 이동 중" hidden>
+      <svg class="loading-icon" viewBox="0 0 512 512" aria-hidden="true">
+        <path
+          d="M222.7 32.1c5 16.9-4.6 34.8-21.5 39.8C121.8 95.6 64 169.1 64 256c0 106 86 192 192 192s192-86 192-192c0-86.9-57.8-160.4-137.1-184.1c-16.9-5-26.6-22.9-21.5-39.8s22.9-26.6 39.8-21.5C434.9 42.1 512 140 512 256c0 141.4-114.6 256-256 256S0 397.4 0 256C0 140 77.1 42.1 182.9 10.6c16.9-5 34.8 4.6 39.8 21.5z"
+        />
+      </svg>
+    </div>
+
+    <script src="./vendor/rive/rive.js"></script>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
