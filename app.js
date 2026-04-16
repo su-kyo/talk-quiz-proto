@@ -278,6 +278,7 @@ function initApp() {
     riveViewport: document.querySelector("#riveViewport"),
     riveCanvas: document.querySelector("#riveCanvas"),
     riveSnapshotCanvas: document.querySelector("#riveSnapshotCanvas"),
+    riveInitialLoader: document.querySelector("#riveInitialLoader"),
     riveDebugMessage: document.querySelector("#riveDebugMessage"),
   };
 
@@ -343,6 +344,7 @@ function initRive() {
           setupRiveInputs();
           setupRiveEvents();
           updateRiveCover();
+          completeInitialRiveLoading();
           window.setTimeout(() => {
             if (!appState.hasStarted) {
               logRive("revealDone-timeout", "revealDone was not received before fallback start.", "warn");
@@ -651,6 +653,13 @@ function markRiveFailure(message, error) {
     refs.riveDebugMessage.textContent = `${message} 브라우저 콘솔의 [TalkQuiz:Rive] 로그를 확인해 주세요.`;
     refs.riveDebugMessage.hidden = false;
   }
+}
+
+function completeInitialRiveLoading() {
+  refs.riveInitialLoader?.setAttribute("aria-hidden", "true");
+  window.requestAnimationFrame(() => {
+    setArticlePanelOpen(true, { useSnapshot: true });
+  });
 }
 
 function setFallbackMood(mood) {
@@ -1166,10 +1175,12 @@ function closeArticleForSnackChapter() {
   setArticlePanelOpen(false);
 }
 
-function setArticlePanelOpen(isOpen) {
+function setArticlePanelOpen(isOpen, { useSnapshot = true } = {}) {
   if (refs.shell.dataset.articleOpen === String(isOpen)) return;
 
-  beginRiveResizeSnapshot(RESIZE_SNAPSHOT_CONFIG.finalCoverDelayMs);
+  if (useSnapshot) {
+    beginRiveResizeSnapshot(RESIZE_SNAPSHOT_CONFIG.finalCoverDelayMs);
+  }
   refs.shell.dataset.articleOpen = String(isOpen);
   refs.buttonArticle.setAttribute("aria-expanded", String(isOpen));
   scheduleRiveCoverUpdate();

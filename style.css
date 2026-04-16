@@ -456,6 +456,43 @@ button {
     var(--quiz-bg);
 }
 
+.rive-initial-loader {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  background: url("./foodtruck-bg.svg") center / cover no-repeat;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: none;
+  transition:
+    opacity 320ms ease,
+    visibility 0s linear 320ms;
+}
+
+.rive-initial-loader::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.36);
+}
+
+.rive-initial-icon {
+  position: relative;
+  z-index: 1;
+}
+
+.rive-layer[data-rive-state="loaded"] .rive-initial-loader {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.rive-layer[data-rive-state="failed"] .rive-initial-loader {
+  opacity: 0;
+  visibility: hidden;
+}
+
 .rive-viewport {
   position: absolute;
   left: 0;

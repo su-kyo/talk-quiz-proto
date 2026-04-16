@@ -172,11 +172,14 @@ test("pages are split so quiz markup is isolated from intro and done", () => {
   assert.match(introHtml, /window\.addEventListener\("keyup", handleIntroEscape, true\)/);
   assert.match(introHtml, /sessionStorage\.setItem\("quizEntry",\s*"true"\)/);
   assert.doesNotMatch(introHtml, /class="module-ribbon"/);
-  assert.match(quizHtml, /class="student-screen"/);
+  assert.match(quizHtml, /class="student-screen" data-article-open="false"/);
   assert.match(quizHtml, /sessionStorage\.getItem\("quizEntry"\)/);
   assert.match(quizHtml, /location\.replace\("\.\/intro\.html"\)/);
   assert.match(quizHtml, /sessionStorage\.removeItem\("quizEntry"\)/);
   assert.match(quizHtml, /id="loadingOverlay"[^>]*hidden/);
+  assert.match(quizHtml, /id="riveInitialLoader"/);
+  assert.match(quizHtml, /foodtruck-bg\.svg/);
+  assert.match(quizHtml, /aria-expanded="false"/);
   assert.match(quizHtml, /id="snackTimer"[^>]*hidden/);
   assert.match(quizHtml, /id="snackChoiceList"/);
   assert.match(quizHtml, />ㅎ</);
@@ -192,6 +195,8 @@ test("pages are split so quiz markup is isolated from intro and done", () => {
   assert.match(styles, /bg_done\.png/);
   assert.match(styles, /\.intro-ribbon-body/);
   assert.match(styles, /border:\s*8px solid #cbd5e1/);
+  assert.match(styles, /\.rive-initial-loader\s*\{[\s\S]*?background:\s*url\("\.\/foodtruck-bg\.svg"\) center \/ cover no-repeat;/);
+  assert.match(styles, /\.rive-layer\[data-rive-state="loaded"\]\s+\.rive-initial-loader\s*\{[\s\S]*?opacity:\s*0;/);
   assert.match(styles, /\.snack-layer\s*\{[\s\S]*?z-index:\s*10;/);
   assert.match(styles, /\.snack-layer\s*\{[\s\S]*?pointer-events:\s*none;/);
   assert.match(styles, /\.snack-sticker\s*\{[\s\S]*?pointer-events:\s*auto;/);
@@ -256,6 +261,8 @@ test("quiz script is quiz-only and done page reads session storage", () => {
   assert.match(appScript, /sessionStorage\.setItem\(SELECTED_SNACK_STORAGE_KEY/);
   assert.match(appScript, /function startSnackChapter/);
   assert.match(appScript, /function handleEscapeWarp/);
+  assert.match(appScript, /function completeInitialRiveLoading/);
+  assert.match(appScript, /setArticlePanelOpen\(true, \{ useSnapshot: true \}\)/);
   assert.match(appScript, /let flowRunId = 0/);
   assert.match(appScript, /const runId = advanceFlowRun\(\)/);
   assert.match(appScript, /isStaleFlowRun\(runId\)/);
