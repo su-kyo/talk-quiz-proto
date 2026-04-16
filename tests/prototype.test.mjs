@@ -215,6 +215,39 @@ test("pages are split so quiz markup is isolated from intro and done", () => {
   assert.doesNotMatch(styles, /top:\s*-\d{2}%/);
 });
 
+test("short viewport layouts keep choices reachable with compact spacing and local scroll", () => {
+  const styles = readFileSync(new URL("../style.css", import.meta.url), "utf8");
+  const baseChoiceBlock = styles.match(/\.choice-list\s*\{[\s\S]*?\n\}/)?.[0] || "";
+  const baseSnackChoiceBlock = styles.match(/\.snack-choice-list\s*\{[\s\S]*?\n\}/)?.[0] || "";
+  const baseUserAreaBlock = styles.match(/\.user-area\s*\{[\s\S]*?\n\}/)?.[0] || "";
+  const userAreaBlocks = [...styles.matchAll(/\.user-area\s*\{[\s\S]*?\n\s*\}/g)].map(
+    (match) => match[0],
+  );
+
+  assert.match(styles, /@media\s*\(max-height:\s*900px\)/);
+  assert.match(styles, /@media\s*\(max-height:\s*780px\)/);
+  assert.match(styles, /@media\s*\(max-height:\s*680px\)/);
+  assert.doesNotMatch(baseChoiceBlock, /overflow-y:\s*auto;/);
+  assert.doesNotMatch(baseSnackChoiceBlock, /overflow-y:\s*auto;/);
+  assert.match(baseChoiceBlock, /gap:\s*calc\(var\(--button-depth\) \+ 8px\);/);
+  assert.match(baseSnackChoiceBlock, /gap:\s*8px;/);
+  assert.match(baseUserAreaBlock, /padding:\s*80px var\(--choice-side-safe\) 40px;/);
+  assert.ok(userAreaBlocks.every((block) => !/padding-left:\s*48px;/.test(block)));
+  assert.ok(userAreaBlocks.every((block) => !/padding-right:\s*48px;/.test(block)));
+  assert.match(styles, /max-height:\s*900px[\s\S]*?\.npc-area\s*\{[\s\S]*?padding-top:\s*40px;/);
+  assert.match(styles, /max-height:\s*900px[\s\S]*?\.user-area\s*\{[\s\S]*?padding:\s*30px var\(--choice-side-safe\) 40px;/);
+  assert.match(styles, /max-height:\s*780px[\s\S]*?\.npc-area\s*\{[\s\S]*?padding-top:\s*40px;/);
+  assert.match(styles, /max-height:\s*780px[\s\S]*?\.user-area\s*\{[\s\S]*?padding:\s*20px var\(--choice-side-safe\) 40px;/);
+  assert.match(styles, /max-height:\s*900px[\s\S]*?\.choice-list\s*\{[\s\S]*?gap:\s*calc\(var\(--button-depth\) \+ 8px\);/);
+  assert.match(styles, /max-height:\s*900px[\s\S]*?\.snack-choice-list\s*\{[\s\S]*?gap:\s*8px;/);
+  assert.match(styles, /max-height:\s*780px[\s\S]*?\.choice-list\s*\{[\s\S]*?gap:\s*calc\(var\(--button-depth\) \+ 8px\);/);
+  assert.match(styles, /max-height:\s*780px[\s\S]*?\.choice-button\s*\{[\s\S]*?min-height:\s*60px;/);
+  assert.match(styles, /max-height:\s*780px[\s\S]*?\.choice-list\[data-type="ox"\]\s+\.choice-button\s*\{[\s\S]*?min-height:\s*144px;/);
+  assert.match(styles, /max-height:\s*780px[\s\S]*?\.snack-choice-button\s*\{[\s\S]*?max-height:\s*104px;/);
+  assert.match(styles, /max-height:\s*680px[\s\S]*?\.choice-list\s*\{[\s\S]*?max-height:\s*min\(44vh,\s*260px\);[\s\S]*?overflow-y:\s*auto;/);
+  assert.match(styles, /max-height:\s*680px[\s\S]*?\.snack-choice-list\s*\{[\s\S]*?max-height:\s*min\(34vh,\s*188px\);[\s\S]*?overflow-y:\s*auto;/);
+});
+
 test("done result cards use shared Q and A row layout", () => {
   const doneScript = readFileSync(new URL("../done.js", import.meta.url), "utf8");
   const styles = readFileSync(new URL("../style.css", import.meta.url), "utf8");
