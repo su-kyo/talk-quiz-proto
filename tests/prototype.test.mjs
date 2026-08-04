@@ -92,11 +92,10 @@ test("snack chapter has six deployable snack options and storage payloads", () =
     snackOptions.map((snack) => snack.id),
     ["snack-01", "snack-02", "snack-03", "snack-04", "snack-05", "snack-06"],
   );
-  assert.equal(snackOptions.every((snack) => snack.src.includes(".png")), true);
-  assert.match(snackOptions[1].src, /snack-02\.png\?v=/);
+  assert.equal(snackOptions.every((snack) => snack.src.includes(".webp")), true);
   assert.deepEqual(createSnackSelectionPayload(snackOptions[5], true), {
     id: "snack-06",
-    src: "./snack-06.png",
+    src: "./snack-06.webp",
     wasRandom: true,
   });
 });
@@ -162,7 +161,7 @@ test("pages are split so quiz markup is isolated from intro and done", () => {
 
   assert.match(indexHtml, /intro\.html/);
   assert.match(introHtml, /href="\.\/quiz\.html"/);
-  assert.match(introHtml, /bg_intro\.png/);
+  assert.match(introHtml, /bg_intro\.webp/);
   assert.match(introHtml, /intro-ribbon-body/);
   assert.match(introHtml, /sessionStorage\.removeItem\("quizEntry"\)/);
   assert.match(introHtml, /sessionStorage\.removeItem\("quizFinished"\)/);
@@ -172,14 +171,15 @@ test("pages are split so quiz markup is isolated from intro and done", () => {
   assert.match(introHtml, /window\.addEventListener\("keyup", handleIntroEscape, true\)/);
   assert.match(introHtml, /sessionStorage\.setItem\("quizEntry",\s*"true"\)/);
   assert.doesNotMatch(introHtml, /class="module-ribbon"/);
-  assert.match(quizHtml, /class="student-screen" data-article-open="false"/);
+  // 지문은 열린 상태로 시작한다 (인트로에서 들어오면 바로 읽을 수 있게).
+  assert.match(quizHtml, /class="student-screen" data-article-open="true"/);
   assert.match(quizHtml, /sessionStorage\.getItem\("quizEntry"\)/);
   assert.match(quizHtml, /location\.replace\("\.\/intro\.html"\)/);
   assert.match(quizHtml, /sessionStorage\.removeItem\("quizEntry"\)/);
   assert.match(quizHtml, /id="loadingOverlay"[^>]*hidden/);
   assert.match(quizHtml, /id="riveInitialLoader"/);
   assert.match(quizHtml, /foodtruck-bg\.svg/);
-  assert.match(quizHtml, /aria-expanded="false"/);
+  assert.match(quizHtml, /aria-expanded="true"/);
   assert.match(quizHtml, /id="snackTimer"[^>]*hidden/);
   assert.match(quizHtml, /id="snackChoiceList"/);
   assert.match(quizHtml, />ㅎ</);
@@ -191,8 +191,8 @@ test("pages are split so quiz markup is isolated from intro and done", () => {
   assert.match(doneHtml, /sessionStorage\.removeItem\("quizFinished"\)/);
   assert.match(doneHtml, /id="snackLayer"/);
   assert.doesNotMatch(doneHtml, /id="resultScreen"/);
-  assert.match(styles, /bg_intro\.png/);
-  assert.match(styles, /bg_done\.png/);
+  assert.match(styles, /bg_intro\.webp/);
+  assert.match(styles, /bg_done\.webp/);
   assert.match(styles, /\.intro-ribbon-body/);
   assert.match(styles, /border:\s*8px solid #cbd5e1/);
   assert.match(styles, /\.rive-initial-loader\s*\{[\s\S]*?background:\s*url\("\.\/foodtruck-bg\.svg"\) center \/ cover no-repeat;/);
@@ -295,15 +295,22 @@ test("quiz script is quiz-only and done page reads session storage", () => {
   assert.match(appScript, /function startSnackChapter/);
   assert.match(appScript, /function handleEscapeWarp/);
   assert.match(appScript, /function completeInitialRiveLoading/);
-  assert.match(appScript, /setArticlePanelOpen\(true, \{ useSnapshot: true \}\)/);
+  // 지문 기본 열림은 quiz.html 마크업이 담당한다. 로딩이 끝난 뒤 여는 코드가 남아 있으면
+  // 화면이 한 번 밀려 보이고, Rive 로딩이 실패했을 때 닫힌 채로 남는다.
+  assert.doesNotMatch(appScript, /setArticlePanelOpen\(true/);
+  assert.match(appScript, /function setArticlePanelOpen\(isOpen/);
   assert.match(appScript, /let flowRunId = 0/);
   assert.match(appScript, /const runId = advanceFlowRun\(\)/);
   assert.match(appScript, /isStaleFlowRun\(runId\)/);
   assert.match(appScript, /image\.className = "snack-choice-image"/);
   assert.match(appScript, /done\.html/);
+  const dataScript = readFileSync(new URL("../data.js", import.meta.url), "utf8");
   assert.match(doneScript, /sessionStorage\.getItem/);
-  assert.match(doneScript, /talkQuizSummary/);
-  assert.match(doneScript, /talkQuizSelectedSnack/);
+  assert.match(doneScript, /from "\.\/data\.js"/);
+  assert.match(doneScript, /SUMMARY_STORAGE_KEY/);
+  assert.match(doneScript, /SELECTED_SNACK_STORAGE_KEY/);
+  assert.match(dataScript, /talkQuizSummary/);
+  assert.match(dataScript, /talkQuizSelectedSnack/);
   assert.match(doneScript, /renderSelectedSnack/);
   assert.match(doneScript, /snackBitesRemaining/);
   assert.match(doneScript, /snackBiteDirection/);
@@ -316,5 +323,5 @@ test("quiz script is quiz-only and done page reads session storage", () => {
   assert.match(styles, /\.selected-snack\s*\{[\s\S]*?animation:\s*none;/);
   assert.match(styles, /\.selected-snack\s*\{[\s\S]*?transition:\s*transform 150ms/);
   assert.doesNotMatch(styles, /snackNibble/);
-  assert.doesNotMatch(doneHtml, /snack-01\.png/);
+  assert.doesNotMatch(doneHtml, /snack-01\.webp/);
 });

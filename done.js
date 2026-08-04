@@ -1,46 +1,16 @@
-const SUMMARY_STORAGE_KEY = "talkQuizSummary";
-const SELECTED_SNACK_STORAGE_KEY = "talkQuizSelectedSnack";
-const SNACK_TOTAL_BITES = 4;
+import { SUMMARY_STORAGE_KEY, SELECTED_SNACK_STORAGE_KEY, quizData, snackOptions } from "./data.js";
 
-const snackOptions = [
-  { id: "snack-01", src: "./snack-01.png", alt: "선택한 간식" },
-  { id: "snack-02", src: "./snack-02.png?v=20260416-2", alt: "선택한 간식" },
-  { id: "snack-03", src: "./snack-03.png", alt: "선택한 간식" },
-  { id: "snack-04", src: "./snack-04.png", alt: "선택한 간식" },
-  { id: "snack-05", src: "./snack-05.png", alt: "선택한 간식" },
-  { id: "snack-06", src: "./snack-06.png", alt: "선택한 간식" },
-];
+const SNACK_TOTAL_BITES = 4;
 
 let snackBitesRemaining = SNACK_TOTAL_BITES;
 let snackBiteDirection = 1;
 
-const fallbackSummary = [
-  {
-    question: "글을 읽고, 글쓴이가 가장 먼저 권하는 실천 방법으로 알맞은 것을 고르세요.",
-    answerText: "음식을 먹을 수 있을 만큼만 덜기",
-    hadWrongAttempt: false,
-  },
-  {
-    question: "이 글은 음식을 남기면 음식물 쓰레기가 되어 지구를 병들게 할 수 있다고 말하고 있습니다.",
-    answerText: "정답은 O입니다.",
-    hadWrongAttempt: false,
-  },
-  {
-    question: "다음 중 글의 내용과 다른 것을 고르세요.",
-    answerText: "음식물 쓰레기는 지구와는 큰 관련이 없다.",
-    hadWrongAttempt: false,
-  },
-  {
-    question: "이 글에 따르면 육식을 늘리는 것은 지구를 지키는 좋은 방법입니다.",
-    answerText: "정답은 X입니다.",
-    hadWrongAttempt: false,
-  },
-  {
-    question: "이 글을 통해 알 수 있는 내용으로 가장 알맞은 것을 고르세요.",
-    answerText: "건강하고 행복한 지구를 위해 식탁에서의 약속을 실천해야 한다.",
-    hadWrongAttempt: false,
-  },
-];
+// 저장된 요약이 없을 때 quizData에서 정답 요약을 만들어 보여준다.
+const fallbackSummary = quizData.map((question) => ({
+  question: question.question,
+  answerText: question.type === "ox" ? `정답은 ${question.answer}입니다.` : question.answer,
+  hadWrongAttempt: false,
+}));
 
 function readSummary() {
   try {

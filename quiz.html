@@ -21,7 +21,7 @@
     </script>
   </head>
   <body>
-    <main class="student-screen" data-article-open="false">
+    <main class="student-screen" data-article-open="true">
       <section class="section-article" aria-label="국어 지문">
         <div class="fontsize-control" aria-label="지문 글자 크기">
           <button type="button" class="fontsize-button" data-font-size="large" aria-label="지문 크게">
@@ -56,10 +56,10 @@
           </div>
         </div>
 
-        <div class="quiz-layer" data-node-name="quiz layer">
-          <div class="npc-area" data-node-name="npc area">
-            <div class="dialogue-npc" data-node-name="dialogue npc">
-              <div class="npc-textbox" data-node-name="textbox" aria-live="polite">
+        <div class="quiz-layer">
+          <div class="npc-area">
+            <div class="dialogue-npc">
+              <div class="npc-textbox" aria-live="polite">
                 <div class="snack-timer" id="snackTimer" aria-label="간식 선택 남은 시간" hidden>
                   <svg class="snack-timer-ring" viewBox="0 0 48 48" aria-hidden="true">
                     <circle class="snack-timer-track" cx="24" cy="24" r="20"></circle>
@@ -73,12 +73,12 @@
             </div>
           </div>
 
-          <div class="user-area" data-node-name="user area">
-            <div class="dialogue-user" data-node-name="dialogue user">
+          <div class="user-area">
+            <div class="dialogue-user">
               <div class="choice-list" id="choiceList" aria-label="선택지"></div>
               <div class="snack-choice-list" id="snackChoiceList" aria-label="간식 선택" hidden></div>
 
-              <div class="student-response" id="studentResponse" data-node-name="comment" hidden>
+              <div class="student-response" id="studentResponse" hidden>
                 <p id="studentText"></p>
                 <div class="student-button-row">
                   <button type="button" class="next-button" id="nextButton">다음 <span aria-hidden="true">›</span></button>
@@ -100,7 +100,7 @@
           class="button-article"
           id="buttonArticle"
           aria-controls="articleText"
-          aria-expanded="false"
+          aria-expanded="true"
           aria-label="지문 열기 닫기"
         >
           <img src="./article.svg" alt="" aria-hidden="true" />

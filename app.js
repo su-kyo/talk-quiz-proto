@@ -9,61 +9,8 @@ export const INTRO_TEXT =
 
 export const REACTION_TEXT = "아하, 이제 이해됐어요!";
 
-export const quizData = [
-  {
-    type: "text",
-    question: "글을 읽고, 글쓴이가 가장 먼저 권하는 실천 방법으로 알맞은 것을 고르세요.",
-    choices: [
-      "먹고 싶은 음식만 골라 먹기",
-      "음식을 먹을 수 있을 만큼만 덜기",
-      "고기 반찬을 더 많이 먹기",
-    ],
-    answer: "음식을 먹을 수 있을 만큼만 덜기",
-    explanation:
-      "이 글에서는 음식물 쓰레기를 줄이기 위한 첫 번째 방법으로 음식을 남기지 않도록 노력하자고 했습니다. 그래서 먹을 수 있을 만큼만 덜어 남기지 않는 태도가 중요합니다.",
-  },
-  {
-    type: "ox",
-    question:
-      "이 글은 음식을 남기면 음식물 쓰레기가 되어 지구를 병들게 할 수 있다고 말하고 있습니다.",
-    choices: ["O", "X"],
-    answer: "O",
-    explanation:
-      "글의 첫 부분에서 우리가 남긴 음식이 모두 음식물 쓰레기가 되어 지구를 병들게 한다고 설명하고 있습니다. 따라서 이 문장은 글의 내용과 같습니다.",
-  },
-  {
-    type: "text",
-    question: "다음 중 글의 내용과 다른 것을 고르세요.",
-    choices: [
-      "채식을 하는 것도 지구를 지키는 방법이다.",
-      "동물을 기르는 과정에서는 지구에 해로운 가스가 나오기도 한다.",
-      "음식물 쓰레기는 지구와는 큰 관련이 없다.",
-    ],
-    answer: "음식물 쓰레기는 지구와는 큰 관련이 없다.",
-    explanation:
-      "글에서는 음식물 쓰레기가 지구를 병들게 한다고 분명히 말하고 있습니다. 따라서 음식물 쓰레기가 지구와 큰 관련이 없다는 3번은 글의 내용과 다릅니다.",
-  },
-  {
-    type: "ox",
-    question: "이 글에 따르면 육식을 늘리는 것은 지구를 지키는 좋은 방법입니다.",
-    choices: ["O", "X"],
-    answer: "X",
-    explanation:
-      "글에서는 육식보다 채식을 하는 것이 지구를 지키는 방법이라고 설명합니다. 고기를 만들기 위해 동물을 기르는 과정에서 지구에 해로운 가스가 나오기 때문입니다.",
-  },
-  {
-    type: "text",
-    question: "이 글을 통해 알 수 있는 내용으로 가장 알맞은 것을 고르세요.",
-    choices: [
-      "건강하고 행복한 지구를 위해 식탁에서의 약속을 실천해야 한다.",
-      "급식은 맛있는 음식만 골라서 먹는 것이 가장 중요하다.",
-      "채소 반찬은 남겨도 음식물 쓰레기가 되지 않는다.",
-    ],
-    answer: "건강하고 행복한 지구를 위해 식탁에서의 약속을 실천해야 한다.",
-    explanation:
-      "이 글은 음식물 쓰레기를 줄이고 지구를 지키기 위해 식탁에서 실천할 수 있는 약속들을 소개하고 있습니다. 따라서 글의 중심 생각은 1번이 가장 잘 드러냅니다.",
-  },
-];
+export { quizData, snackOptions, SUMMARY_STORAGE_KEY, SELECTED_SNACK_STORAGE_KEY } from "./data.js";
+import { quizData, snackOptions, SUMMARY_STORAGE_KEY, SELECTED_SNACK_STORAGE_KEY } from "./data.js";
 
 export const RIVE_CONFIG = {
   src: "./foodtruck-edit.riv",
@@ -86,21 +33,10 @@ export const RESIZE_SNAPSHOT_CONFIG = {
   finalCoverDelayMs: 280,
 };
 
-export const SUMMARY_STORAGE_KEY = "talkQuizSummary";
-export const SELECTED_SNACK_STORAGE_KEY = "talkQuizSelectedSnack";
 export const SKIP_TO_LAST_STORAGE_KEY = "talkQuizSkipToLast";
 export const SNACK_COUNTDOWN_SECONDS = 5;
 
 export const SNACK_PROMPT_TEXT = "문제를 잘 맞췄으니 원하는 간식을 하나 골라보세요!";
-
-export const snackOptions = [
-  { id: "snack-01", src: "./snack-01.png", alt: "핫도그" },
-  { id: "snack-02", src: "./snack-02.png?v=20260416-2", alt: "꼬치" },
-  { id: "snack-03", src: "./snack-03.png", alt: "샌드위치" },
-  { id: "snack-04", src: "./snack-04.png", alt: "떡꼬치" },
-  { id: "snack-05", src: "./snack-05.png", alt: "핫바" },
-  { id: "snack-06", src: "./snack-06.png", alt: "김밥" },
-];
 
 const TYPE_DELAY_MS = 34;
 const ANSWER_FEEDBACK_MS = 1000;
@@ -655,11 +591,10 @@ function markRiveFailure(message, error) {
   }
 }
 
+// 지문은 quiz.html 에서 data-article-open="true" 로 시작하므로 여기서 열지 않는다.
+// (로딩 후 여는 방식은 화면이 한 번 밀려 보이고, Rive 로딩이 실패하면 닫힌 채로 남았다.)
 function completeInitialRiveLoading() {
   refs.riveInitialLoader?.setAttribute("aria-hidden", "true");
-  window.requestAnimationFrame(() => {
-    setArticlePanelOpen(true, { useSnapshot: true });
-  });
 }
 
 function setFallbackMood(mood) {
