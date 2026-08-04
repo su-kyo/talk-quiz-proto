@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>지문 버튼 시안 비교 — 아콘과 대화하기</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;800;900&family=Noto+Serif+KR:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preload" as="image" href="./foodtruck-bg.svg" />
+    <link rel="stylesheet" href="./style.css" />
+    <!-- 시안 비교용 오버라이드. 원본 style.css 는 수정하지 않는다. -->
+    <link rel="stylesheet" href="./mockup.css" />
+  </head>
+  <body data-variant="tab-vertical">
+    <main class="student-screen" data-article-open="true">
+      <section class="section-article" aria-label="국어 지문">
+        <div class="fontsize-control" aria-label="지문 글자 크기">
+          <button type="button" class="fontsize-button" data-font-size="large" aria-label="지문 크게">
+            <span class="font-icon font-icon-plus" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="fontsize-button is-active" data-font-size="normal" aria-label="지문 보통">
+            <span class="font-icon font-icon-normal" aria-hidden="true">ㅎ</span>
+          </button>
+          <button type="button" class="fontsize-button" data-font-size="small" aria-label="지문 작게">
+            <span class="font-icon font-icon-minus" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <article class="article-scroll article-size-normal" id="articleText"></article>
+      </section>
+
+      <section class="section-quiz" aria-label="아콘과 대화하기 활동">
+        <div class="rive-layer" id="riveStage" data-rive-state="booting">
+          <div class="rive-viewport" id="riveViewport">
+            <canvas id="riveCanvas" aria-label="NPC 고양이 아콘 애니메이션"></canvas>
+            <canvas class="rive-snapshot" id="riveSnapshotCanvas" aria-hidden="true" hidden></canvas>
+          </div>
+          <div class="rive-initial-loader" id="riveInitialLoader" aria-label="아콘을 불러오는 중">
+            <svg class="loading-icon rive-initial-icon" viewBox="0 0 512 512" aria-hidden="true">
+              <path
+                d="M222.7 32.1c5 16.9-4.6 34.8-21.5 39.8C121.8 95.6 64 169.1 64 256c0 106 86 192 192 192s192-86 192-192c0-86.9-57.8-160.4-137.1-184.1c-16.9-5-26.6-22.9-21.5-39.8s22.9-26.6 39.8-21.5C434.9 42.1 512 140 512 256c0 141.4-114.6 256-256 256S0 397.4 0 256C0 140 77.1 42.1 182.9 10.6c16.9-5 34.8 4.6 39.8 21.5z"
+              />
+            </svg>
+          </div>
+          <div class="rive-debug-message" id="riveDebugMessage" hidden>
+            Rive 로딩 상태를 확인해 주세요.
+          </div>
+        </div>
+
+        <div class="quiz-layer">
+          <div class="npc-area">
+            <div class="dialogue-npc">
+              <div class="npc-textbox" aria-live="polite">
+                <div class="snack-timer" id="snackTimer" aria-label="간식 선택 남은 시간" hidden>
+                  <svg class="snack-timer-ring" viewBox="0 0 48 48" aria-hidden="true">
+                    <circle class="snack-timer-track" cx="24" cy="24" r="20"></circle>
+                    <circle class="snack-timer-progress" id="snackTimerProgress" cx="24" cy="24" r="20"></circle>
+                  </svg>
+                  <span class="snack-timer-value" id="snackTimerValue">5</span>
+                </div>
+                <p id="npcText"></p>
+              </div>
+              <div class="npc-tail" aria-hidden="true"></div>
+            </div>
+          </div>
+
+          <div class="user-area">
+            <div class="dialogue-user">
+              <div class="choice-list" id="choiceList" aria-label="선택지"></div>
+              <div class="snack-choice-list" id="snackChoiceList" aria-label="간식 선택" hidden></div>
+
+              <div class="student-response" id="studentResponse" hidden>
+                <p id="studentText"></p>
+                <div class="student-button-row">
+                  <button type="button" class="next-button" id="nextButton">다음 <span aria-hidden="true">›</span></button>
+                </div>
+              </div>
+
+              <div class="finish-card" id="finishCard" hidden>
+                <p>모든 이야기를 마쳤어요. 식탁에서 지구를 지키는 약속을 실천해 봐요!</p>
+                <div class="student-button-row">
+                  <button type="button" class="next-button" id="endButton">끝내기</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--
+          원본과 동일한 id/class 를 유지하므로 app.js 의 토글 로직은 그대로 동작한다.
+          아이콘 · 화살표 · 텍스트를 모두 넣어두고 시안별로 CSS 로 표시 여부만 바꾼다.
+          텍스트는 숨겨질 때도 스크린리더용으로 남으므로 어느 시안에서든 버튼 이름이 읽힌다.
+        -->
+        <button
+          type="button"
+          class="button-article"
+          id="buttonArticle"
+          aria-controls="articleText"
+          aria-expanded="true"
+        >
+          <span class="ba-book" aria-hidden="true"></span>
+          <span class="ba-arrow" aria-hidden="true"></span>
+          <span class="ba-label ba-label-open">지문 열기</span>
+          <span class="ba-label ba-label-close">지문 닫기</span>
+        </button>
+      </section>
+    </main>
+
+    <div class="loading-overlay" id="loadingOverlay" aria-live="polite" aria-label="다음 화면으로 이동 중" hidden>
+      <svg class="loading-icon" viewBox="0 0 512 512" aria-hidden="true">
+        <path
+          d="M222.7 32.1c5 16.9-4.6 34.8-21.5 39.8C121.8 95.6 64 169.1 64 256c0 106 86 192 192 192s192-86 192-192c0-86.9-57.8-160.4-137.1-184.1c-16.9-5-26.6-22.9-21.5-39.8s22.9-26.6 39.8-21.5C434.9 42.1 512 140 512 256c0 141.4-114.6 256-256 256S0 397.4 0 256C0 140 77.1 42.1 182.9 10.6c16.9-5 34.8 4.6 39.8 21.5z"
+        />
+      </svg>
+    </div>
+
+    <!-- ─── 시안 전환 패널 (목업 전용) ─────────────────────────────────── -->
+    <aside class="mock-panel" id="mockPanel" aria-label="시안 전환">
+      <button type="button" class="mock-collapse" id="mockCollapse" aria-label="패널 접기">–</button>
+      <h1 class="mock-title">지문 버튼 시안 비교</h1>
+      <p class="mock-lead">지문을 열고 닫아 두 상태를 모두 확인해 주세요.</p>
+
+      <div class="mock-group" role="radiogroup" aria-label="시안 선택">
+        <label class="mock-option">
+          <input type="radio" name="variant" value="current" />
+          <span><b>현재안</b> 아이콘 · 하단 좌측</span>
+        </label>
+        <label class="mock-option">
+          <input type="radio" name="variant" value="tab-vertical" checked />
+          <span><b>A 세로 글자 탭</b> 화살표 + 지문 열기</span>
+        </label>
+        <label class="mock-option">
+          <input type="radio" name="variant" value="tab-round" />
+          <span><b>B 라운드 손잡이</b> 큰 화살표 · 평면</span>
+        </label>
+        <label class="mock-option">
+          <input type="radio" name="variant" value="tab-icon" />
+          <span><b>C 아이콘 탭</b> 책 + 화살표</span>
+        </label>
+      </div>
+
+      <p class="mock-note" id="mockNote"></p>
+    </aside>
+
+    <script src="./vendor/rive/rive.js"></script>
+    <script type="module" src="./app.js"></script>
+    <script type="module" src="./mockup.js"></script>
+  </body>
+</html>

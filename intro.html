@@ -37,9 +37,36 @@
           <p>지문을 읽고 질문에 답하는 활동이에요.</p>
           <p>알맞은 답을 고르며 내용을 살펴보세요.</p>
         </div>
-        <a class="intro-start-button" id="introStartButton" href="./quiz.html">시작하기</a>
+        <div class="intro-button-row">
+          <a class="intro-start-button" id="introStartButton" href="./quiz.html">시작하기</a>
+          <!-- 시안 검토용 진입 버튼. 시안 확정 후 이 버튼과 아래 style 블록을 삭제한다. -->
+          <a class="intro-start-button intro-start-button--mock" id="introMockButton" href="./quiz-mockup.html">시작하기 2</a>
+        </div>
       </div>
     </main>
+
+    <!-- 시안 검토용 (확정 후 삭제) -->
+    <style>
+      .intro-button-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .intro-start-button--mock {
+        min-width: 0;
+        padding: 16px 40px;
+        background: #523411;
+        box-shadow:
+          0 6px 0 #352008,
+          0 0 48px rgba(82, 52, 17, 0.5);
+        font-size: 26px;
+      }
+      .intro-start-button--mock:active {
+        box-shadow: 0 1px 0 #352008;
+      }
+    </style>
     <script>
       let isStartingQuiz = false;
 
