@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 
 import {
   calculateCoverRect,
@@ -152,30 +152,20 @@ test("Rive resize snapshot overlay is present and uses lightweight timing", () =
   assert.ok(RESIZE_SNAPSHOT_CONFIG.finalCoverDelayMs >= 260);
 });
 
-test("pages are split so quiz markup is isolated from intro and done", () => {
+test("pages are split so quiz markup is isolated from done, with no intro page", () => {
   const indexHtml = readFileSync(new URL("../index.html", import.meta.url), "utf8");
-  const introHtml = readFileSync(new URL("../intro.html", import.meta.url), "utf8");
   const quizHtml = readFileSync(new URL("../quiz.html", import.meta.url), "utf8");
   const doneHtml = readFileSync(new URL("../done.html", import.meta.url), "utf8");
   const styles = readFileSync(new URL("../style.css", import.meta.url), "utf8");
 
-  assert.match(indexHtml, /intro\.html/);
-  assert.match(introHtml, /href="\.\/quiz\.html"/);
-  assert.match(introHtml, /bg_intro\.webp/);
-  assert.match(introHtml, /intro-ribbon-body/);
-  assert.match(introHtml, /sessionStorage\.removeItem\("quizEntry"\)/);
-  assert.match(introHtml, /sessionStorage\.removeItem\("quizFinished"\)/);
-  assert.match(introHtml, /sessionStorage\.removeItem\("talkQuizSummary"\)/);
-  assert.match(introHtml, /function startQuizFromIntro\(skipToLast = false\)/);
-  assert.match(introHtml, /window\.addEventListener\("keydown", handleIntroEscape, true\)/);
-  assert.match(introHtml, /window\.addEventListener\("keyup", handleIntroEscape, true\)/);
-  assert.match(introHtml, /sessionStorage\.setItem\("quizEntry",\s*"true"\)/);
-  assert.doesNotMatch(introHtml, /class="module-ribbon"/);
-  // 지문은 열린 상태로 시작한다 (인트로에서 들어오면 바로 읽을 수 있게).
+  assert.ok(!existsSync(new URL("../intro.html", import.meta.url)));
+  assert.match(indexHtml, /quiz\.html/);
+  assert.doesNotMatch(indexHtml, /intro\.html/);
+  // 지문은 열린 상태로 시작한다 (들어오면 바로 읽을 수 있게).
   assert.match(quizHtml, /class="student-screen" data-article-open="true"/);
-  assert.match(quizHtml, /sessionStorage\.getItem\("quizEntry"\)/);
-  assert.match(quizHtml, /location\.replace\("\.\/intro\.html"\)/);
-  assert.match(quizHtml, /sessionStorage\.removeItem\("quizEntry"\)/);
+  assert.doesNotMatch(quizHtml, /quizEntry|intro\.html/);
+  assert.match(quizHtml, /sessionStorage\.removeItem\("quizFinished"\)/);
+  assert.match(quizHtml, /sessionStorage\.removeItem\("talkQuizSummary"\)/);
   assert.match(quizHtml, /id="loadingOverlay"[^>]*hidden/);
   assert.match(quizHtml, /id="riveInitialLoader"/);
   assert.match(quizHtml, /foodtruck-bg\.svg/);
@@ -187,14 +177,12 @@ test("pages are split so quiz markup is isolated from intro and done", () => {
   assert.doesNotMatch(quizHtml, /id="introScreen"|id="doneScreen"|data-screen/);
   assert.match(doneHtml, /id="doneCards"/);
   assert.match(doneHtml, /sessionStorage\.getItem\("quizFinished"\)/);
-  assert.match(doneHtml, /location\.replace\("\.\/intro\.html"\)/);
+  assert.match(doneHtml, /location\.replace\("\.\/quiz\.html"\)/);
   assert.match(doneHtml, /sessionStorage\.removeItem\("quizFinished"\)/);
   assert.match(doneHtml, /id="snackLayer"/);
   assert.doesNotMatch(doneHtml, /id="resultScreen"/);
-  assert.match(styles, /bg_intro\.webp/);
+  assert.doesNotMatch(styles, /bg_intro\.webp|\.screen-intro|\.intro-/);
   assert.match(styles, /bg_done\.webp/);
-  assert.match(styles, /\.intro-ribbon-body/);
-  assert.match(styles, /border:\s*8px solid #cbd5e1/);
   assert.match(styles, /\.rive-initial-loader\s*\{[\s\S]*?background:\s*url\("\.\/foodtruck-bg\.svg"\) center \/ cover no-repeat;/);
   assert.match(styles, /\.rive-layer\[data-rive-state="loaded"\]\s+\.rive-initial-loader\s*\{[\s\S]*?opacity:\s*0;/);
   assert.match(styles, /\.snack-layer\s*\{[\s\S]*?z-index:\s*10;/);
