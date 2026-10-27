@@ -60,11 +60,14 @@ export const quizData = [
   },
 ];
 
+// sprite: 한 줄에 6장면(400×400) — 0 통째 → 5 다 먹음. Figma 「sprite」(diSQITLFXTBQFShm0JAzLg, 16428:620).
+export const SNACK_SPRITE_FRAMES = 6;
+
 export const snackOptions = [
-  { id: "snack-01", src: "./snack-01.webp", alt: "핫도그" },
-  { id: "snack-02", src: "./snack-02.webp", alt: "꼬치" },
-  { id: "snack-03", src: "./snack-03.webp", alt: "샌드위치" },
-  { id: "snack-04", src: "./snack-04.webp", alt: "떡꼬치" },
-  { id: "snack-05", src: "./snack-05.webp", alt: "핫바" },
-  { id: "snack-06", src: "./snack-06.webp", alt: "김밥" },
+  { id: "snack-01", src: "./snack-01.webp", sprite: "./snack-01-sprite.webp", alt: "소시지" },
+  { id: "snack-02", src: "./snack-02.webp", sprite: "./snack-02-sprite.webp", alt: "데리야끼 꼬치" },
+  { id: "snack-03", src: "./snack-03.webp", sprite: "./snack-03-sprite.webp", alt: "타코야끼" },
+  { id: "snack-04", src: "./snack-04.webp", sprite: "./snack-04-sprite.webp", alt: "떡꼬치" },
+  { id: "snack-05", src: "./snack-05.webp", sprite: "./snack-05-sprite.webp", alt: "츄러스" },
+  { id: "snack-06", src: "./snack-06.webp", sprite: "./snack-06-sprite.webp", alt: "과일 꼬치" },
 ];

@@ -198,8 +198,8 @@ test("pages are split so quiz markup is isolated from done, with no intro page",
   assert.match(styles, /\.snack-choice-image\s*\{[\s\S]*?width:\s*100%;/);
   assert.match(styles, /\.snack-choice-image\s*\{[\s\S]*?height:\s*100%;/);
   assert.match(styles, /\.snack-choice-image\s*\{[\s\S]*?object-fit:\s*contain;/);
-  assert.match(styles, /\.selected-snack\s*\{[\s\S]*?width:\s*clamp\(260px,\s*28vw,\s*396px\);/);
-  assert.match(styles, /\.snack-bite-badge\s*\{[\s\S]*?z-index:\s*3;/);
+  assert.match(styles, /\.selected-snack\s*\{[\s\S]*?width:\s*55vmin;/);
+  assert.doesNotMatch(styles, /\.snack-bite-badge/);
   assert.doesNotMatch(styles, /top:\s*-\d{2}%/);
 });
 
@@ -305,7 +305,7 @@ test("quiz script is quiz-only and done page reads session storage", () => {
   assert.match(doneScript, /snackBiteDirection \*= -1/);
   assert.match(doneScript, /--rotate/);
   assert.match(doneScript, /enableDoneScroll\(\)/);
-  assert.match(doneScript, /\[\$\{snackBitesRemaining\}\/\$\{SNACK_TOTAL_BITES\}\]/);
+  assert.doesNotMatch(doneScript, /snack-bite-badge/);
   assert.match(styles, /\.screen-done\.is-scrollable\s*\{[\s\S]*?overflow-y:\s*auto;/);
   assert.match(styles, /\.screen-done\.is-scrollable\s+\.done-container\s*\{[\s\S]*?height:\s*auto;/);
   assert.match(styles, /\.selected-snack\s*\{[\s\S]*?animation:\s*none;/);

@@ -1,6 +1,8 @@
-import { SUMMARY_STORAGE_KEY, SELECTED_SNACK_STORAGE_KEY, quizData, snackOptions } from "./data.js";
+import { SUMMARY_STORAGE_KEY, SELECTED_SNACK_STORAGE_KEY, SNACK_SPRITE_FRAMES, quizData, snackOptions } from "./data.js";
 
-const SNACK_TOTAL_BITES = 4;
+// 한 번 누를 때마다 스프라이트 한 장면씩 — 마지막 장면(다 먹음)을 잠깐 보여 준 뒤 사라진다.
+const SNACK_TOTAL_BITES = SNACK_SPRITE_FRAMES - 1;
+const SNACK_EMPTY_HOLD_MS = 520;
 
 let snackBitesRemaining = SNACK_TOTAL_BITES;
 let snackBiteDirection = 1;
@@ -83,10 +85,12 @@ function renderSelectedSnack() {
   const snackLayer = document.querySelector("#snackLayer");
   const selectedSnack = readSelectedSnack();
   const sticker = document.createElement("button");
-  const image = document.createElement("img");
-  const badge = document.createElement("span");
-  const randomTop = 5 + Math.round(Math.random() * 24);
-  const randomLeft = 48 + Math.round(Math.random() * 20);
+  const sprite = document.createElement("span");
+  // 크기는 화면 짧은 변의 50~60%, 위치는 화면 안 아무 곳.
+  const layerRect = snackLayer.getBoundingClientRect();
+  const size = Math.min(layerRect.width, layerRect.height) * (0.5 + Math.random() * 0.1);
+  const randomTop = Math.random() * Math.max(layerRect.height - size, 0);
+  const randomLeft = Math.random() * Math.max(layerRect.width - size, 0);
   const randomRotate = -10 + Math.round(Math.random() * 24);
 
   snackLayer.innerHTML = "";
@@ -95,40 +99,42 @@ function renderSelectedSnack() {
   sticker.type = "button";
   sticker.className = "snack-sticker selected-snack";
   sticker.dataset.snackId = selectedSnack.id;
-  sticker.style.top = `${randomTop}%`;
-  sticker.style.left = `${randomLeft}%`;
+  sticker.style.width = `${Math.round(size)}px`;
+  sticker.style.top = `${Math.round(randomTop)}px`;
+  sticker.style.left = `${Math.round(randomLeft)}px`;
   sticker.style.setProperty("--rotate", `${randomRotate}deg`);
-  sticker.setAttribute("aria-label", "선택한 간식 먹기");
+  sticker.setAttribute("aria-label", `${selectedSnack.alt} 먹기`);
 
-  image.src = selectedSnack.src;
-  image.alt = "";
-  image.setAttribute("aria-hidden", "true");
+  sprite.className = "snack-sprite";
+  sprite.style.backgroundImage = `url("${selectedSnack.sprite}")`;
+  sprite.setAttribute("aria-hidden", "true");
+  setSnackFrame(sprite, 0);
 
-  badge.className = "snack-bite-badge";
-  badge.textContent = `[${SNACK_TOTAL_BITES}/${SNACK_TOTAL_BITES}]`;
-  sticker.append(image, badge);
+  sticker.append(sprite);
   snackLayer.append(sticker);
+}
+
+function setSnackFrame(sprite, frame) {
+  sprite.style.backgroundPositionX = `${(frame / (SNACK_SPRITE_FRAMES - 1)) * 100}%`;
 }
 
 function handleSnackClick(event) {
   const sticker = event.target.closest(".snack-sticker");
-  if (!sticker || sticker.classList.contains("is-popping")) return;
+  if (!sticker || sticker.classList.contains("is-finished")) return;
 
   snackBitesRemaining -= 1;
-  if (snackBitesRemaining > 0) {
-    sticker.querySelector(".snack-bite-badge").textContent = `[${snackBitesRemaining}/${SNACK_TOTAL_BITES}]`;
-    rotateSnackOnce(sticker);
-    return;
-  }
-
+  setSnackFrame(sticker.querySelector(".snack-sprite"), SNACK_TOTAL_BITES - snackBitesRemaining);
   rotateSnackOnce(sticker);
+  if (snackBitesRemaining > 0) return;
+
+  sticker.classList.add("is-finished");
   window.setTimeout(() => {
     sticker.classList.add("is-popping");
-  }, 140);
+  }, SNACK_EMPTY_HOLD_MS);
   window.setTimeout(() => {
     sticker.hidden = true;
     enableDoneScroll();
-  }, 400);
+  }, SNACK_EMPTY_HOLD_MS + 260);
 }
 
 function rotateSnackOnce(sticker) {
